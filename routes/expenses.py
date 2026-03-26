@@ -13,7 +13,7 @@ def index():
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT * FROM expenses"
+        "SELECT * FROM expenses ORDER BY id DESC"
         )
     expenses = cursor.fetchall()
     conn.close()
@@ -28,11 +28,24 @@ def add():
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO expenses (name, value, category) VALUES (?, ?,?)",
+        "INSERT INTO expenses (name, value, category) VALUES (?, ?, ?)",
         (name, value, category)
         )
     conn.commit()
     conn.close
 
     return redirect("/")
+
+@expenses_bp.route("/delete/<int:id>", methods=["POST"])
+def delete(id):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM expenses WHERE id = ?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/")
+
 
