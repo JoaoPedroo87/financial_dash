@@ -14,11 +14,19 @@
         <form action="/add" method="post">
             <input type="text" name="name" placeholder="Nome" required>
             <input type="number" step="0.01"name="value" placeholder="Valor" required>
-            <select name="category">
-                <option value="alimentacao">Alimentação</option>
+            <select name="type" id="type">
+                <option value="expense">Gasto</option>
+                <option value="income">Receita</option>
+            </select>
+            <select name="category" id="category">
+                <!--<option value="alimentacao">Alimentação</option>
                 <option value="lazer">Lazer</option>
                 <option value="transporte">Transporte</option>
+                <option value="salario">Salário</option>
+                <option value="renda_extra">Renda Extra</option>
+                <option value="investimentos">Investimentos</option>-->
             </select>
+            <input type="date" name="date" id="date">
             <button type="submit">Adicionar</button>
         </form>
     </div>  
@@ -30,14 +38,15 @@
         <ul>
             {% for expense in expenses %}
                 <li>
-                    {{expense[1]}} - R$ {{ expense[2]}} - {{ expense[3]}}
+                    {{expense[1]}} - R$ {{ expense[2]}} - {{ expense[3]}} - {{expense[4]}} - {{expense[5]}}
                     <form action="/delete/{{ expense[0] }}" method="post" style="display: inline;">
                     <button type="submit">❌</button>
                     </form>
                 </li>
             {% endfor %}
         </ul>
-        <h2>Total: R$ {{ total }}</h2>
+        <h2>Receita: R$ {{ income }}</h2>
+        <h2>Gastos: R$ {{ expenses_total }}</h2>
         <h3>Gasto por categoria:</h3>
     </div>
 </section>
