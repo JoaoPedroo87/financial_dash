@@ -9,7 +9,17 @@
 <body>
 <section>
     <div class="form">
-        <h1>Adicionar Gasto</h1>
+        <form method="GET">
+            <input type="date" name="start_date" placeholder="Data inicial">
+            <input type="date" name="end_date" placeholder="Data Final">
+            <button type="submit">Filtrar</button>
+        </form>
+        {% if request.args.get('start_date') or request.args.get('end_date') %}
+                <a href="/" class="btm">Limpar Filtros</a>
+        {% endif %}
+    </div>
+    <div class="form">
+        <h1>Adicionar Transação</h1>
 
         <form action="/add" method="post">
             <input type="text" name="name" placeholder="Nome" required>
@@ -19,12 +29,6 @@
                 <option value="income">Receita</option>
             </select>
             <select name="category" id="category">
-                <!--<option value="alimentacao">Alimentação</option>
-                <option value="lazer">Lazer</option>
-                <option value="transporte">Transporte</option>
-                <option value="salario">Salário</option>
-                <option value="renda_extra">Renda Extra</option>
-                <option value="investimentos">Investimentos</option>-->
             </select>
             <input type="date" name="date" id="date">
             <button type="submit">Adicionar</button>
@@ -33,20 +37,26 @@
 </section>
 <section>
     <div class="data">
-        <h2>Gastos:</h2>
+        <h2>Últimas Transações:</h2>
         
         <ul>
-            {% for expense in expenses %}
-                <li>
-                    {{expense[1]}} - R$ {{ expense[2]}} - {{ expense[3]}} - {{expense[4]}} - {{expense[5]}}
-                    <form action="/delete/{{ expense[0] }}" method="post" style="display: inline;">
-                    <button type="submit">❌</button>
-                    </form>
-                </li>
-            {% endfor %}
+            {% if expenses %}
+                {% for expense in expenses %}
+                    <li>
+                        {{expense[1]}} - R$ {{ "{:,.2f}".format(expense[2]).replace(',', 'x').replace('.',',').replace('x','.') }} - {{ expense[3].capitalize() }} - {{ 'Receita' if expense[4] == 'income' else 'Gasto'}} - {{ expense[5].split('-')[2] }}/{{ expense[5].split('-')[1] }}/{{ expense[5].split('-')[0] }}
+                        <form action="/delete/{{ expense[0] }}" method="post" style="display: inline;">
+                        <button type="submit">❌</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            {% else %}
+                    <p>Nenhuma transição encontrada.</p>
+            {% endif %}
         </ul>
-        <h2>Receita: R$ {{ income }}</h2>
-        <h2>Gastos: R$ {{ expenses_total }}</h2>
+        <h2>Receita: R$ {{ "{:,.2f}".format(income).replace(',', 'x').replace('.',',').replace('x','.') }}</h2>
+        <h2>Gastos: R$ {{ "{:,.2f}".format(expenses_total).replace(',', 'x').replace('.',',').replace('x','.')  }}</h2>
+        <h2>Saldo: R$ {{ "{:,.2f}".format(balance).replace(',', 'x').replace('.',',').replace('x','.') }}</h2>
+        <h2>Evolução mensal: {{ monthly }}</h2>
         <h3>Gasto por categoria:</h3>
     </div>
 </section>

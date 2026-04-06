@@ -12,29 +12,54 @@ def connect_db():
 def index():
     conn = connect_db()
     cursor = conn.cursor()
-    #Lista de gastos
-    cursor.execute("""
-        SELECT * FROM expenses ORDER BY id DESC
-    """)
+
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    query_filter = ""
+    params = []
+
+    if start_date and end_date:
+        query_filter = "AND date BETWEEN ? AND ?"
+        params = [start_date, end_date]
+
+    #Transações
+    cursor.execute(f"""
+        SELECT * FROM expenses {'WHERE date BETWEEN ? AND ?' if start_date and end_date else ''} ORDER BY date DESC LIMIT 50
+    """, params)
     expenses = cursor.fetchall()
 
     #Receitas
-    cursor.execute("""
-        SELECT SUM(value) FROM expenses WHERE type = 'income'
-    """)
+    cursor.execute(f"""
+        SELECT SUM(value) FROM expenses WHERE type = 'income' {query_filter}
+    """, params)
     income = cursor.fetchone()[0] or 0
 
     #Gastos
-    cursor.execute("""
-        SELECT SUM(value) FROM expenses WHERE type = 'expense'
-    """)
+    cursor.execute(f"""
+        SELECT SUM(value) FROM expenses WHERE type = 'expense' {query_filter}
+    """, params)
     expenses_total = cursor.fetchone()[0] or 0
 
     #Gasto por Categoria
-    cursor.execute("""
-        SELECT category, SUM(value) FROM expenses WHERE type = 'expense' GROUP BY category
-    """)
+    cursor.execute(f"""
+        SELECT category, SUM(value) FROM expenses WHERE type = 'expense' {query_filter} GROUP BY category
+    """, params)
     categories = cursor.fetchall()
+
+    #Saldo
+    balance = income - expenses_total
+
+    #Evolucão Mensal
+    cursor.execute("""
+        SELECT strftime('%Y-%m', date) as month,
+                SUM(CASE WHEN type='income' THEN value ELSE 0 END),
+                SUM(CASE WHEN type='expense' THEN value ELSE 0 END)
+        FROM expenses
+        GROUP BY month
+        ORDER BY month
+    """)
+    monthly = cursor.fetchall()
 
     conn.close()
     return render_template(
@@ -42,7 +67,9 @@ def index():
         expenses=expenses,
         income=income,
         expenses_total=expenses_total,
-        categories=categories
+        categories=categories,
+        balance=balance,
+        monthly = monthly
         )
 
 @expenses_bp.route("/add", methods=["POST"])
@@ -52,6 +79,17 @@ def add():
     category = request.form["category"]
     type_of = request.form["type"]
     date = request.form["date"]
+
+    if not name or not value:
+        return "Dados inválidos", 400
+    
+    try:
+        value = float(value)
+    except:
+        return "Valor Inválido", 400
+    
+    if value <= 0:
+        return "Valor deve ser positivo", 400
 
     conn = connect_db()
     cursor = conn.cursor()
