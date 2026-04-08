@@ -10,11 +10,11 @@
 <section>
     <div class="form">
         <form method="GET">
-            <input type="date" name="start_date" placeholder="Data inicial">
-            <input type="date" name="end_date" placeholder="Data Final">
+            <input type="date" name="start_date" value="{{ start_date }}">
+            <input type="date" name="end_date" value="{{ end_date }}">
             <button type="submit">Filtrar</button>
         </form>
-        {% if request.args.get('start_date') or request.args.get('end_date') %}
+        {% if start_date and end_date %}
                 <a href="/" class="btm">Limpar Filtros</a>
         {% endif %}
     </div>
@@ -56,16 +56,20 @@
         <h2>Receita: R$ {{ "{:,.2f}".format(income).replace(',', 'x').replace('.',',').replace('x','.') }}</h2>
         <h2>Gastos: R$ {{ "{:,.2f}".format(expenses_total).replace(',', 'x').replace('.',',').replace('x','.')  }}</h2>
         <h2>Saldo: R$ {{ "{:,.2f}".format(balance).replace(',', 'x').replace('.',',').replace('x','.') }}</h2>
-        <h2>Evolução mensal: {{ monthly }}</h2>
-        <h3>Gasto por categoria:</h3>
     </div>
 </section>
+<h3 class="data">Gasto por categoria:</h3>
 <canvas id="myChart"></canvas>
+<h3 class="data">Evolução Mensal:</h3>
+<canvas id="monGraph"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     window.chartData = {{ categories | tojson }};
+</script>
+<script>
+    window.monthlyData = {{ monthly | tojson }};
 </script>
 
 <script src="/static/script.js"></script>

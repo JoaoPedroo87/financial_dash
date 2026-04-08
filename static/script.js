@@ -14,6 +14,30 @@ new Chart(document.getElementById('myChart'), {
     }
 });
 
+//Gráfico - Evolução Mensal
+const monthly = window.monthlyData;
+
+const labels2 = monthly.map(element => element[0]);
+const values1 = monthly.map(element => element[1]);
+const values2 = monthly.map(element => element[2])
+
+new Chart(document.getElementById('monGraph'), {
+    type: 'bar',
+    data: {
+        labels: labels2,
+        datasets: [
+            {
+                label: 'receita',
+                data: values1
+            }, 
+            {
+                label: 'gastos',
+                data: values2
+            }
+        ]
+    }
+});
+
 //Separação de categorias pelo tipo selecionado
 const typeSelect = document.getElementById('type');
 const categorySelect = document.getElementById('category');

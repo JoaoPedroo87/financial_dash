@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request, redirect
 import sqlite3
+from datetime import date
+from calendar import monthrange
+
 
 expenses_bp = Blueprint("expenses", __name__) 
 
@@ -13,9 +16,20 @@ def index():
     conn = connect_db()
     cursor = conn.cursor()
 
+    today = date.today()
+    first_day = today.replace(day=1)
+
+    lastday_num = monthrange(today.year, today.month)[1]
+    last_day = today.replace(day=lastday_num)
+
+
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
 
+    if not start_date or not end_date:
+        start_date = first_day
+        end_date = last_day
+    
     query_filter = ""
     params = []
 
@@ -69,7 +83,9 @@ def index():
         expenses_total=expenses_total,
         categories=categories,
         balance=balance,
-        monthly = monthly
+        monthly = monthly,
+        start_date = start_date,
+        end_date = end_date
         )
 
 @expenses_bp.route("/add", methods=["POST"])
