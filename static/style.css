@@ -1,16 +1,59 @@
-.form{
+body{
+    background-color: #2E073F;
+    color: white;
     font-family: Arial;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
-.data{
-    font-family: Arial;
+.container{
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas: 
+        "sidebar header"
+        "sidebar summary"
+        "sidebar main";
+    height: 100vh;
+    gap: 20px;
+    padding: 20px;
+}
+
+.sidebar{
+    grid-area: sidebar;
+    background-color: #7A1CAC;
+    border-radius: 10px;
+}
+.header{
+    /*grid-area: header;*/
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
+    
+    gap: 20px;
+    width: 100%;
+    
+}
+.title, .filter{
+    padding: 20px;
+    text-align: center;
+}
+
+.summary{
+    grid-area: summary;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.main{
+    grid-area: main;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.card{
+    background-color: #7A1CAC;
+    border-radius: 10px;
 }
 #myChart{
     margin: auto;
