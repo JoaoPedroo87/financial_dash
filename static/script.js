@@ -11,6 +11,10 @@ new Chart(document.getElementById('myChart'), {
         datasets: [{
             data: values
         }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
     }
 });
 
@@ -19,7 +23,7 @@ const monthly = window.monthlyData;
 
 const labels2 = monthly.map(element => element[0]);
 const values1 = monthly.map(element => element[1]);
-const values2 = monthly.map(element => element[2])
+const values2 = monthly.map(element => element[2]);
 
 new Chart(document.getElementById('monGraph'), {
     type: 'bar',
@@ -37,6 +41,25 @@ new Chart(document.getElementById('monGraph'), {
         ]
     }
 });
+
+//Gráfico - Evolução das Receitas
+const income = window.incomeData;
+
+const labels3 = income.map(item => item[0]);
+const values3 = income.map(item => item[1]);
+
+new Chart(document.getElementById('incomeGraph'), {
+    type: 'line',
+    data: {
+        labels: labels3,
+        datasets: [{
+            data: values3,
+            fill: true
+        }]
+    }
+});
+
+
 
 //Separação de categorias pelo tipo selecionado
 const typeSelect = document.getElementById('type');

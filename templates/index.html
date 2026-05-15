@@ -12,7 +12,8 @@
             <div class="title">
                 <h1>Dashboard Financeiro</h1>
             </div>
-            <div class="filter">
+            <!--<div class="filter">
+                <h3>Filtro</h3>
                 <form method="GET">
                     <input type="date" name="start_date" value="{{ start_date }}">
                     <input type="date" name="end_date" value="{{ end_date }}">
@@ -21,7 +22,7 @@
                 {% if start_date and end_date %}
                         <a href="/" class="btm">Limpar Filtros</a>
                 {% endif %}
-            </div>
+            </div>-->
         </header>
 
         <aside class="sidebar">
@@ -38,6 +39,16 @@
                 <input type="date" name="date" id="date">
                 <button type="submit">Adicionar</button>
             </form>
+            
+            <h3>Filtro</h3>
+                <form method="GET">
+                    <input type="date" name="start_date" value="{{ start_date }}">
+                    <input type="date" name="end_date" value="{{ end_date }}">
+                    <button type="submit">Filtrar</button>
+                </form>
+                {% if start_date and end_date %}
+                        <a href="/" class="btm">Limpar Filtros</a>
+                {% endif %}
         </aside>  
 
         <section class="summary">
@@ -55,9 +66,10 @@
         <main class="main">
             <div class="card big">
                 <h3>Evolução das Receitas</h3>
+                <canvas id="incomeGraph"></canvas>
             </div>
             <div class="card big">
-                <h2>Últimas Transações:</h2>
+                <h3>Últimas Transações:</h3>
                 
                 <ul>
                     {% if expenses %}
@@ -80,7 +92,9 @@
             </div>
              <div class="card big">
                    <h3 class="data">Gasto por categoria:</h3>
-                    <canvas id="myChart"></canvas>
+                   <div class="chart-container">
+                   <canvas id="myChart"></canvas>
+                   </div>
             </div>
         </main>
     </div>
@@ -92,6 +106,9 @@
 </script>
 <script>
     window.monthlyData = {{ monthly | tojson }};
+</script>
+<script>
+    window.incomeData = {{ monthly | tojson}};
 </script>
 
 <script src="/static/script.js"></script>
